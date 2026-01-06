@@ -39,73 +39,59 @@
     <iframe width="560" height="315" src="https://www.youtube.com/embed/lfSdR-ymk9E" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 <script>
-/**
- * Coding Partner - Usercentrics v3 Injection
- * Targets: .cmp-wrapper -> .uc-main-dialog
- */
-
 (function() {
     const DOG_URL = 'https://i.imgur.com/DJ3lttY.png';
 
-    const injectDogV3 = () => {
-        const root = document.getElementById('usercentrics-root');
-        if (!root || !root.shadowRoot) return;
-
-        const shadow = root.shadowRoot;
-        
-        // Target the specific v3 container hierarchy
+    const inject = (shadow) => {
+        // Target the specific v3 dialog container
         const mainDialog = shadow.querySelector('.uc-main-dialog');
-
-        if (mainDialog && !shadow.getElementById('v3-dog-container')) {
-            // 1. Create a wrapper for the dog image
-            const dogWrapper = document.createElement('div');
-            dogWrapper.id = 'v3-dog-container';
-            
-            // 2. Set styles to align to the left of the dialog
-            dogWrapper.style.cssText = `
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 20px 0 20px 20px;
-                flex-shrink: 0;
-            `;
-
+        
+        if (mainDialog && !shadow.getElementById('v3-dog-image')) {
             const img = document.createElement('img');
+            img.id = 'v3-dog-image';
             img.src = DOG_URL;
             img.style.cssText = `
-                width: 120px;
+                width: 100px;
                 height: auto;
-                object-fit: contain;
+                margin: 20px;
+                flex-shrink: 0;
+                align-self: center;
             `;
 
-            dogWrapper.appendChild(img);
-
-            // 3. Force the main dialog to be a row layout
+            // Force layout to row so dog stays left
             mainDialog.style.display = 'flex';
             mainDialog.style.flexDirection = 'row';
-            mainDialog.style.alignItems = 'stretch';
+            mainDialog.style.alignItems = 'center';
 
-            // 4. Prepend the dog to the dialog
-            mainDialog.prepend(dogWrapper);
-            
-            console.log("🐶 v3: Dog placed inside .uc-main-dialog");
+            mainDialog.prepend(img);
+            console.log("🐶 Dog successfully prepended to .uc-main-dialog");
         }
     };
 
-    // Usercentrics v3 event listener
-    window.addEventListener('UC_UI_VIEW_CHANGED', (event) => {
-        if (event.detail && event.detail.view === 'FIRST_LAYER') {
-            // v3 needs a small tick to ensure the DOM nodes are ready
-            setTimeout(injectDogV3, 50);
-        }
-    });
+    const watchShadow = () => {
+        const host = document.getElementById('usercentrics-root');
+        if (!host || !host.shadowRoot) return;
 
-    // Run immediately and every 500ms for 3 seconds as a safety fallback
-    let attempts = 0;
-    const retry = setInterval(() => {
-        injectDogV3();
-        if (++attempts > 6) clearInterval(retry);
-    }, 500);
+        // Create an observer for the INSIDE of the shadow root
+        const shadowObserver = new MutationObserver(() => inject(host.shadowRoot));
+        
+        shadowObserver.observe(host.shadowRoot, {
+            childList: true,
+            subtree: true
+        });
+
+        // Run once immediately
+        inject(host.shadowRoot);
+    };
+
+    // Keep checking for the host element to appear
+    const findHost = setInterval(() => {
+        const host = document.getElementById('usercentrics-root');
+        if (host) {
+            watchShadow();
+            clearInterval(findHost);
+        }
+    }, 100);
 })();
 </script>
 </body>

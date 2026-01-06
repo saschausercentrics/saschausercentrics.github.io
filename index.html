@@ -2,27 +2,67 @@
 <html lang="en">
     
 <head>
-   <style>
-       /* Target the first layer of the CMP */
-#usercentrics-root::part(first-layer) {
-    display: flex !important;
-    align-items: center !important;
-    flex-direction: row !important;
-}
+  <script>
+      /**
+ * Coding Partner - Usercentrics Customization Script
+ * Purpose: Injects a dog image into the Shadow DOM of the CMP banner.
+ */
 
-/* Inject the dog image to the left */
-#usercentrics-root::part(first-layer)::before {
-    content: "";
-    display: block;
-    width: 100px;  /* Adjust size as needed */
-    height: 400px;
-    margin-right: 20px;
-    background-image: url('https://i.imgur.com/DJ3lttY.png'); /* Replace with your dog image URL */
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    flex-shrink: 0;
-}</style>
+const injectDogToBanner = () => {
+    const root = document.getElementById('usercentrics-root');
+    
+    // 1. Check if the Shadow Root exists
+    if (!root || !root.shadowRoot) return;
+
+    // 2. Target the first layer container (where the text and buttons live)
+    // Usercentrics v2 usually uses 'section' or specific data-testid attributes
+    const mainLayer = root.shadowRoot.querySelector('[data-testid="first-layer-container"]') || 
+                      root.shadowRoot.querySelector('.uc-banner-content')?.parentElement;
+
+    if (mainLayer && !root.shadowRoot.querySelector('#custom-dog-banner-img')) {
+        // 3. Create the image element
+        const dogImg = document.createElement('img');
+        dogImg.id = 'custom-dog-banner-img';
+        dogImg.src = 'https://i.imgur.com/DJ3lttY.png';
+        
+        // 4. Style the image and the container
+        dogImg.style.cssText = `
+            width: 120px;
+            height: auto;
+            margin: 20px;
+            object-fit: contain;
+            flex-shrink: 0;
+        `;
+
+        // Force the container to be a row so the image stays on the left
+        mainLayer.style.display = 'flex';
+        mainLayer.style.flexDirection = 'row';
+        mainLayer.style.alignItems = 'center';
+
+        // 5. Insert the image at the very beginning of the banner
+        mainLayer.prepend(dogImg);
+    }
+};
+
+// Use an observer to handle the asynchronous loading of the CMP
+const bannerObserver = new MutationObserver((mutations) => {
+    const root = document.getElementById('usercentrics-root');
+    if (root) {
+        // We poll slightly to wait for the Shadow DOM content to populate
+        const checkInterval = setInterval(() => {
+            if (root.shadowRoot && root.shadowRoot.children.length > 0) {
+                injectDogToBanner();
+                clearInterval(checkInterval);
+            }
+        }, 100);
+        
+        // Stop observing once we've found the root
+        bannerObserver.disconnect();
+    }
+});
+
+bannerObserver.observe(document.body, { childList: true, subtree: true });
+  </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width" , initial-scale="1.0">
     <title>UC CMP Test</title>    

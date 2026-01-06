@@ -43,10 +43,11 @@
     const DOG_URL = 'https://i.imgur.com/DJ3lttY.png';
 
     const performInjection = (root) => {
-        const shadow = root.shadowRoot;
-        if (!shadow) return;
+        // v3 Shadow Root might take a moment to be attached
+        if (!root || !root.shadowRoot) return;
 
-        // Target the v3 specific class you mentioned
+        const shadow = root.shadowRoot;
+        // Search specifically for the v3 dialog class
         const mainDialog = shadow.querySelector('.uc-main-dialog');
 
         if (mainDialog && !shadow.getElementById('v3-dog-image')) {
@@ -62,7 +63,7 @@
                 display: block !important;
             `;
 
-            // Apply flex layout to the dialog to place dog on the left
+            // Apply flex layout to the v3 dialog
             mainDialog.style.display = 'flex';
             mainDialog.style.flexDirection = 'row';
             mainDialog.style.alignItems = 'center';
@@ -72,25 +73,33 @@
         }
     };
 
-    // 1. Watch the whole page for the arrival of the Usercentrics root
+    // This part handles the initial discovery and the "patience" logic
     const bodyObserver = new MutationObserver(() => {
         const root = document.getElementById('usercentrics-root');
+        
         if (root) {
-            // 2. Once the root exists, watch its INSIDE (the Shadow DOM)
-            performInjection(root);
-            
-            // Set up a second observer inside the shadow root to handle re-renders
-            if (root.shadowRoot && !root.dataset.observed) {
-                const shadowObserver = new MutationObserver(() => performInjection(root));
-                shadowObserver.observe(root.shadowRoot, { childList: true, subtree: true });
-                root.dataset.observed = "true";
-            }
+            // Even if root exists, we need to wait for the shadowRoot to "open"
+            const checkShadow = setInterval(() => {
+                if (root.shadowRoot && root.shadowRoot.querySelector('.uc-main-dialog')) {
+                    performInjection(root);
+                    
+                    // Once injected, set up the internal observer to keep it there
+                    if (!root.dataset.observed) {
+                        const shadowObserver = new MutationObserver(() => performInjection(root));
+                        shadowObserver.observe(root.shadowRoot, { childList: true, subtree: true });
+                        root.dataset.observed = "true";
+                    }
+                    clearInterval(checkShadow);
+                }
+            }, 100);
+
+            // Safety: stop polling after 5 seconds
+            setTimeout(() => clearInterval(checkShadow), 5000);
         }
     });
 
     bodyObserver.observe(document.body, { childList: true, subtree: true });
-
-    console.log("🛠 Observer active: Waiting for Usercentrics v3...");
+    console.log("🛠 Observer active: Waiting for v3 Shadow DOM to open...");
 })();
 </script>
 </body>

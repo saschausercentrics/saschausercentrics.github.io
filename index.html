@@ -42,64 +42,53 @@
 (function() {
     const DOG_URL = 'https://i.imgur.com/DJ3lttY.png';
 
-    const performInjection = (root) => {
-        // v3 Shadow Root might take a moment to be attached
-        if (!root || !root.shadowRoot) return;
+    const injectDog = () => {
+        // Target the specific ASIDE element you found
+        const host = document.getElementById('usercentrics-cmp-ui');
+        if (!host || !host.shadowRoot) return;
 
-        const shadow = root.shadowRoot;
-        // Search specifically for the v3 dialog class
+        const shadow = host.shadowRoot;
+        // Search for the main dialog area inside the shadow
         const mainDialog = shadow.querySelector('.uc-main-dialog');
 
         if (mainDialog && !shadow.getElementById('v3-dog-image')) {
-            const img = document.createElement('img');
-            img.id = 'v3-dog-image';
-            img.src = DOG_URL;
-            img.style.cssText = `
-                width: 100px;
-                height: auto;
-                margin: 20px;
+            // 1. Create the dog element
+            const dogContainer = document.createElement('div');
+            dogContainer.id = 'v3-dog-image';
+            dogContainer.style.cssText = `
+                display: flex;
+                align-items: center;
+                padding: 20px;
                 flex-shrink: 0;
-                align-self: center;
-                display: block !important;
             `;
 
-            // Apply flex layout to the v3 dialog
+            const img = document.createElement('img');
+            img.src = DOG_URL;
+            img.style.cssText = `
+                width: 100px; 
+                height: auto;
+                display: block;
+            `;
+            
+            dogContainer.appendChild(img);
+
+            // 2. Force the v3 dialog to align side-by-side (Row)
             mainDialog.style.display = 'flex';
             mainDialog.style.flexDirection = 'row';
             mainDialog.style.alignItems = 'center';
 
-            mainDialog.prepend(img);
-            console.log("🐶 SUCCESS: Dog prepended to .uc-main-dialog");
+            // 3. Prepend the dog to the left
+            mainDialog.prepend(dogContainer);
+            console.log("🐶 SUCCESS: Dog prepended to aside#usercentrics-cmp-ui");
         }
     };
 
-    // This part handles the initial discovery and the "patience" logic
-    const bodyObserver = new MutationObserver(() => {
-        const root = document.getElementById('usercentrics-root');
-        
-        if (root) {
-            // Even if root exists, we need to wait for the shadowRoot to "open"
-            const checkShadow = setInterval(() => {
-                if (root.shadowRoot && root.shadowRoot.querySelector('.uc-main-dialog')) {
-                    performInjection(root);
-                    
-                    // Once injected, set up the internal observer to keep it there
-                    if (!root.dataset.observed) {
-                        const shadowObserver = new MutationObserver(() => performInjection(root));
-                        shadowObserver.observe(root.shadowRoot, { childList: true, subtree: true });
-                        root.dataset.observed = "true";
-                    }
-                    clearInterval(checkShadow);
-                }
-            }, 100);
+    // Use a MutationObserver to watch for the banner appearing
+    const observer = new MutationObserver(() => injectDog());
+    observer.observe(document.body, { childList: true, subtree: true });
 
-            // Safety: stop polling after 5 seconds
-            setTimeout(() => clearInterval(checkShadow), 5000);
-        }
-    });
-
-    bodyObserver.observe(document.body, { childList: true, subtree: true });
-    console.log("🛠 Observer active: Waiting for v3 Shadow DOM to open...");
+    // Initial check in case it's already there
+    injectDog();
 })();
 </script>
 </body>

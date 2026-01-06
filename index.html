@@ -42,51 +42,57 @@
 (function() {
     const DOG_URL = 'https://i.imgur.com/DJ3lttY.png';
 
-    const addDog = () => {
-        // 1. Find the root
-        const shadowHost = document.getElementById('usercentrics-root');
-        if (!shadowHost) return;
+    const injectDogV3 = () => {
+        // v3 root is still typically #usercentrics-root
+        const host = document.getElementById('usercentrics-root');
+        if (!host || !host.shadowRoot) return;
 
-        // 2. Access the Shadow Root
-        const shadowRoot = shadowHost.shadowRoot;
-        if (!shadowRoot) return;
+        const shadow = host.shadowRoot;
 
-        // 3. Find the container (targeting the main section)
-        const bannerContainer = shadowRoot.querySelector('section') || 
-                                shadowRoot.querySelector('[data-testid="first-layer-container"]');
+        // In v3, we look for the internal container. 
+        // We target the 'uc-container' which is the main wrapper in the new UI.
+        const container = shadow.querySelector('.uc-container') || 
+                          shadow.querySelector('[data-testid="uc-container"]');
 
-        if (bannerContainer && !shadowRoot.getElementById('custom-dog')) {
-            const img = document.createElement('img');
-            img.id = 'custom-dog';
-            img.src = DOG_URL;
-            img.style.cssText = `
+        if (container && !shadow.getElementById('v3-custom-dog')) {
+            // 1. Create the dog image
+            const dog = document.createElement('img');
+            dog.id = 'v3-custom-dog';
+            dog.src = DOG_URL;
+            
+            // 2. Styling for v3 (using Flexbox to align)
+            dog.style.cssText = `
                 width: 100px;
                 height: auto;
-                margin: 15px;
+                margin: 20px;
                 flex-shrink: 0;
-                z-index: 9999;
+                align-self: center;
+                display: block;
             `;
 
-            // Adjust banner layout
-            bannerContainer.style.display = 'flex';
-            bannerContainer.style.flexDirection = 'row';
-            bannerContainer.style.alignItems = 'center';
+            // 3. Ensure the v3 container allows side-by-side elements
+            // The v3 container is usually a flex-column by default
+            container.style.display = 'flex';
+            container.style.flexDirection = 'row';
+            container.style.alignItems = 'center';
 
-            bannerContainer.prepend(img);
-            console.log("✅ Dog successfully added!");
+            // 4. Prepend the dog to the left of the banner content
+            container.prepend(dog);
+            console.log("🐶 v3: Dog Injected!");
         }
     };
 
-    // Listen for the Usercentrics Initialization event
-    window.addEventListener('uc_initialized', addDog);
+    // v3 Event: Trigger whenever the UI view changes (e.g., banner shows up)
+    window.addEventListener('UC_UI_VIEW_CHANGED', (event) => {
+        // Check if we are looking at the 'FIRST_LAYER'
+        if (event.detail && event.detail.view === 'FIRST_LAYER') {
+            // Brief timeout to ensure the DOM is fully rendered inside the shadow root
+            setTimeout(injectDogV3, 100);
+        }
+    });
 
-    // Fallback: Check every second for 5 seconds in case the event was missed
-    let attempts = 0;
-    const interval = setInterval(() => {
-        addDog();
-        attempts++;
-        if (attempts > 5) clearInterval(interval);
-    }, 1000);
+    // Fallback for initial load
+    setTimeout(injectDogV3, 1000);
 })();
 </script>
 </body>

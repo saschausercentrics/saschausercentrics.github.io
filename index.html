@@ -42,52 +42,51 @@
 (function() {
     const DOG_URL = 'https://i.imgur.com/DJ3lttY.png';
 
-    const injectDog = () => {
-        // 1. Find the host element
-        const host = document.getElementById('usercentrics-root');
-        if (!host || !host.shadowRoot) return;
+    const addDog = () => {
+        // 1. Find the root
+        const shadowHost = document.getElementById('usercentrics-root');
+        if (!shadowHost) return;
 
-        // 2. Look for the actual banner container inside the Shadow DOM
-        const shadow = host.shadowRoot;
-        // We look for common Usercentrics containers
-        const container = shadow.querySelector('[data-testid="first-layer-container"]') || 
-                          shadow.querySelector('section') || 
-                          shadow.querySelector('.uc-banner-content');
+        // 2. Access the Shadow Root
+        const shadowRoot = shadowHost.shadowRoot;
+        if (!shadowRoot) return;
 
-        if (container && !shadow.getElementById('custom-dog-img')) {
-            // 3. Create the dog image
+        // 3. Find the container (targeting the main section)
+        const bannerContainer = shadowRoot.querySelector('section') || 
+                                shadowRoot.querySelector('[data-testid="first-layer-container"]');
+
+        if (bannerContainer && !shadowRoot.getElementById('custom-dog')) {
             const img = document.createElement('img');
-            img.id = 'custom-dog-img';
+            img.id = 'custom-dog';
             img.src = DOG_URL;
-            
-            // 4. Style the image and the banner to sit side-by-side
             img.style.cssText = `
                 width: 100px;
                 height: auto;
-                margin-right: 15px;
+                margin: 15px;
                 flex-shrink: 0;
-                align-self: center;
+                z-index: 9999;
             `;
 
-            // Force the banner to be a Flexbox row
-            container.style.display = 'flex';
-            container.style.flexDirection = 'row';
-            container.style.alignItems = 'center';
-            container.style.paddingLeft = '15px';
+            // Adjust banner layout
+            bannerContainer.style.display = 'flex';
+            bannerContainer.style.flexDirection = 'row';
+            bannerContainer.style.alignItems = 'center';
 
-            // 5. Insert the dog at the start
-            container.prepend(img);
-            console.log("Dog injected!");
+            bannerContainer.prepend(img);
+            console.log("✅ Dog successfully added!");
         }
     };
 
-    // This observer keeps watching the page. Even if the banner loads 
-    // late or changes, the dog will stay there.
-    const observer = new MutationObserver(() => injectDog());
-    observer.observe(document.body, { childList: true, subtree: true });
-    
-    // Initial check
-    injectDog();
+    // Listen for the Usercentrics Initialization event
+    window.addEventListener('uc_initialized', addDog);
+
+    // Fallback: Check every second for 5 seconds in case the event was missed
+    let attempts = 0;
+    const interval = setInterval(() => {
+        addDog();
+        attempts++;
+        if (attempts > 5) clearInterval(interval);
+    }, 1000);
 })();
 </script>
 </body>

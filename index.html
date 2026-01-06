@@ -2,6 +2,27 @@
 <html lang="en">
     
 <head>
+   <style>
+       /* Target the first layer of the CMP */
+#usercentrics-root::part(first-layer) {
+    display: flex !important;
+    align-items: center !important;
+    flex-direction: row !important;
+}
+
+/* Inject the dog image to the left */
+#usercentrics-root::part(first-layer)::before {
+    content: "";
+    display: block;
+    width: 100px;  /* Adjust size as needed */
+    height: 400px;
+    margin-right: 20px;
+    background-image: url('https://i.imgur.com/DJ3lttY.png'); /* Replace with your dog image URL */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    flex-shrink: 0;
+}</style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width" , initial-scale="1.0">
     <title>UC CMP Test</title>    

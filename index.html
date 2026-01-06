@@ -39,60 +39,73 @@
     <iframe width="560" height="315" src="https://www.youtube.com/embed/lfSdR-ymk9E" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 <script>
+/**
+ * Coding Partner - Usercentrics v3 Injection
+ * Targets: .cmp-wrapper -> .uc-main-dialog
+ */
+
 (function() {
     const DOG_URL = 'https://i.imgur.com/DJ3lttY.png';
 
     const injectDogV3 = () => {
-        // v3 root is still typically #usercentrics-root
-        const host = document.getElementById('usercentrics-root');
-        if (!host || !host.shadowRoot) return;
+        const root = document.getElementById('usercentrics-root');
+        if (!root || !root.shadowRoot) return;
 
-        const shadow = host.shadowRoot;
+        const shadow = root.shadowRoot;
+        
+        // Target the specific v3 container hierarchy
+        const mainDialog = shadow.querySelector('.uc-main-dialog');
 
-        // In v3, we look for the internal container. 
-        // We target the 'uc-container' which is the main wrapper in the new UI.
-        const container = shadow.querySelector('.uc-container') || 
-                          shadow.querySelector('[data-testid="uc-container"]');
-
-        if (container && !shadow.getElementById('v3-custom-dog')) {
-            // 1. Create the dog image
-            const dog = document.createElement('img');
-            dog.id = 'v3-custom-dog';
-            dog.src = DOG_URL;
+        if (mainDialog && !shadow.getElementById('v3-dog-container')) {
+            // 1. Create a wrapper for the dog image
+            const dogWrapper = document.createElement('div');
+            dogWrapper.id = 'v3-dog-container';
             
-            // 2. Styling for v3 (using Flexbox to align)
-            dog.style.cssText = `
-                width: 100px;
-                height: auto;
-                margin: 20px;
+            // 2. Set styles to align to the left of the dialog
+            dogWrapper.style.cssText = `
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px 0 20px 20px;
                 flex-shrink: 0;
-                align-self: center;
-                display: block;
             `;
 
-            // 3. Ensure the v3 container allows side-by-side elements
-            // The v3 container is usually a flex-column by default
-            container.style.display = 'flex';
-            container.style.flexDirection = 'row';
-            container.style.alignItems = 'center';
+            const img = document.createElement('img');
+            img.src = DOG_URL;
+            img.style.cssText = `
+                width: 120px;
+                height: auto;
+                object-fit: contain;
+            `;
 
-            // 4. Prepend the dog to the left of the banner content
-            container.prepend(dog);
-            console.log("🐶 v3: Dog Injected!");
+            dogWrapper.appendChild(img);
+
+            // 3. Force the main dialog to be a row layout
+            mainDialog.style.display = 'flex';
+            mainDialog.style.flexDirection = 'row';
+            mainDialog.style.alignItems = 'stretch';
+
+            // 4. Prepend the dog to the dialog
+            mainDialog.prepend(dogWrapper);
+            
+            console.log("🐶 v3: Dog placed inside .uc-main-dialog");
         }
     };
 
-    // v3 Event: Trigger whenever the UI view changes (e.g., banner shows up)
+    // Usercentrics v3 event listener
     window.addEventListener('UC_UI_VIEW_CHANGED', (event) => {
-        // Check if we are looking at the 'FIRST_LAYER'
         if (event.detail && event.detail.view === 'FIRST_LAYER') {
-            // Brief timeout to ensure the DOM is fully rendered inside the shadow root
-            setTimeout(injectDogV3, 100);
+            // v3 needs a small tick to ensure the DOM nodes are ready
+            setTimeout(injectDogV3, 50);
         }
     });
 
-    // Fallback for initial load
-    setTimeout(injectDogV3, 1000);
+    // Run immediately and every 500ms for 3 seconds as a safety fallback
+    let attempts = 0;
+    const retry = setInterval(() => {
+        injectDogV3();
+        if (++attempts > 6) clearInterval(retry);
+    }, 500);
 })();
 </script>
 </body>

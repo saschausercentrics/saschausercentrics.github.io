@@ -39,65 +39,53 @@
     <iframe width="560" height="315" src="https://www.youtube.com/embed/lfSdR-ymk9E" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 <script>
-      /**
- * Coding Partner - Usercentrics Customization Script
- * Purpose: Injects a dog image into the Shadow DOM of the CMP banner.
- */
+     (function() {
+    const dogImgUrl = 'https://i.imgur.com/DJ3lttY.png';
 
-const injectDogToBanner = () => {
-    const root = document.getElementById('usercentrics-root');
-    
-    // 1. Check if the Shadow Root exists
-    if (!root || !root.shadowRoot) return;
+    const tryInjectDog = () => {
+        const root = document.getElementById('usercentrics-root');
+        if (!root || !root.shadowRoot) return false;
 
-    // 2. Target the first layer container (where the text and buttons live)
-    // Usercentrics v2 usually uses 'section' or specific data-testid attributes
-    const mainLayer = root.shadowRoot.querySelector('[data-testid="first-layer-container"]') || 
-                      root.shadowRoot.querySelector('.uc-banner-content')?.parentElement;
-
-    if (mainLayer && !root.shadowRoot.querySelector('#custom-dog-banner-img')) {
-        // 3. Create the image element
-        const dogImg = document.createElement('img');
-        dogImg.id = 'custom-dog-banner-img';
-        dogImg.src = 'https://i.imgur.com/DJ3lttY.png';
+        // Usercentrics v2 internal container
+        const container = root.shadowRoot.querySelector('[data-testid="first-layer-container"]');
         
-        // 4. Style the image and the container
-        dogImg.style.cssText = `
-            width: 120px;
-            height: auto;
-            margin: 20px;
-            object-fit: contain;
-            flex-shrink: 0;
-        `;
+        if (container && !root.shadowRoot.querySelector('#custom-dog')) {
+            // 1. Create the dog image element
+            const dog = document.createElement('img');
+            dog.id = 'custom-dog';
+            dog.src = dogImgUrl;
+            dog.style.cssText = `
+                width: 100px; 
+                height: auto; 
+                margin: 20px;
+                object-fit: contain;
+                flex-shrink: 0;
+            `;
 
-        // Force the container to be a row so the image stays on the left
-        mainLayer.style.display = 'flex';
-        mainLayer.style.flexDirection = 'row';
-        mainLayer.style.alignItems = 'center';
+            // 2. Style the banner to be a Row so the dog is on the left
+            container.style.display = 'flex';
+            container.style.flexDirection = 'row';
+            container.style.alignItems = 'center';
 
-        // 5. Insert the image at the very beginning of the banner
-        mainLayer.prepend(dogImg);
-    }
-};
+            // 3. Insert the dog at the beginning
+            container.prepend(dog);
+            
+            console.log("Dog successfully added to CMP!");
+            return true; // Success
+        }
+        return false;
+    };
 
-// Use an observer to handle the asynchronous loading of the CMP
-const bannerObserver = new MutationObserver((mutations) => {
-    const root = document.getElementById('usercentrics-root');
-    if (root) {
-        // We poll slightly to wait for the Shadow DOM content to populate
-        const checkInterval = setInterval(() => {
-            if (root.shadowRoot && root.shadowRoot.children.length > 0) {
-                injectDogToBanner();
-                clearInterval(checkInterval);
-            }
-        }, 100);
-        
-        // Stop observing once we've found the root
-        bannerObserver.disconnect();
-    }
-});
+    // Keep checking every 200ms until the banner is found and dog is added
+    const checker = setInterval(() => {
+        if (tryInjectDog()) {
+            clearInterval(checker);
+        }
+    }, 200);
 
-bannerObserver.observe(document.body, { childList: true, subtree: true });
+    // Safety: stop checking after 10 seconds if it never appears
+    setTimeout(() => clearInterval(checker), 10000);
+})();
   </script>
 </body>
 

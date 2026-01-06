@@ -38,38 +38,6 @@
     <h2>Metallica Video</h2>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/lfSdR-ymk9E" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-<script>
-(function() {
-    const DOG_URL = 'https://i.imgur.com/DJ3lttY.png';
-
-    const createFloatingDog = () => {
-        const host = document.getElementById('usercentrics-cmp-ui');
-        if (!host || document.getElementById('external-dog')) return;
-
-        // Create a new image outside the Shadow DOM
-        const img = document.createElement('img');
-        img.id = 'external-dog';
-        img.src = DOG_URL;
-        
-        // Style it to float over the banner
-        img.style.cssText = `
-            position: fixed;
-            bottom: 40px; /* Adjust based on banner height */
-            left: 20px;
-            width: 100px;
-            height: auto;
-            z-index: 2147483647; /* Highest possible z-index */
-            pointer-events: none; /* User can click "through" the dog to hit buttons */
-        `;
-
-        document.body.appendChild(img);
-        console.log("🐶 SUCCESS: Floating dog added outside the Shadow DOM!");
-    };
-
-    // Watch for the banner and add the dog
-    setInterval(createFloatingDog, 500);
-})();
-</script>
 </body>
 
 </html>

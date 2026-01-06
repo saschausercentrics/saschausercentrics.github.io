@@ -42,53 +42,32 @@
 (function() {
     const DOG_URL = 'https://i.imgur.com/DJ3lttY.png';
 
-    const injectDog = () => {
-        // Target the specific ASIDE element you found
+    const createFloatingDog = () => {
         const host = document.getElementById('usercentrics-cmp-ui');
-        if (!host || !host.shadowRoot) return;
+        if (!host || document.getElementById('external-dog')) return;
 
-        const shadow = host.shadowRoot;
-        // Search for the main dialog area inside the shadow
-        const mainDialog = shadow.querySelector('.uc-main-dialog');
+        // Create a new image outside the Shadow DOM
+        const img = document.createElement('img');
+        img.id = 'external-dog';
+        img.src = DOG_URL;
+        
+        // Style it to float over the banner
+        img.style.cssText = `
+            position: fixed;
+            bottom: 40px; /* Adjust based on banner height */
+            left: 20px;
+            width: 100px;
+            height: auto;
+            z-index: 2147483647; /* Highest possible z-index */
+            pointer-events: none; /* User can click "through" the dog to hit buttons */
+        `;
 
-        if (mainDialog && !shadow.getElementById('v3-dog-image')) {
-            // 1. Create the dog element
-            const dogContainer = document.createElement('div');
-            dogContainer.id = 'v3-dog-image';
-            dogContainer.style.cssText = `
-                display: flex;
-                align-items: center;
-                padding: 20px;
-                flex-shrink: 0;
-            `;
-
-            const img = document.createElement('img');
-            img.src = DOG_URL;
-            img.style.cssText = `
-                width: 100px; 
-                height: auto;
-                display: block;
-            `;
-            
-            dogContainer.appendChild(img);
-
-            // 2. Force the v3 dialog to align side-by-side (Row)
-            mainDialog.style.display = 'flex';
-            mainDialog.style.flexDirection = 'row';
-            mainDialog.style.alignItems = 'center';
-
-            // 3. Prepend the dog to the left
-            mainDialog.prepend(dogContainer);
-            console.log("🐶 SUCCESS: Dog prepended to aside#usercentrics-cmp-ui");
-        }
+        document.body.appendChild(img);
+        console.log("🐶 SUCCESS: Floating dog added outside the Shadow DOM!");
     };
 
-    // Use a MutationObserver to watch for the banner appearing
-    const observer = new MutationObserver(() => injectDog());
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    // Initial check in case it's already there
-    injectDog();
+    // Watch for the banner and add the dog
+    setInterval(createFloatingDog, 500);
 })();
 </script>
 </body>

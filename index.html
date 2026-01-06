@@ -39,72 +39,57 @@
     <iframe width="560" height="315" src="https://www.youtube.com/embed/lfSdR-ymk9E" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 <script>
-/**
- * Coding Partner - Advanced Shadow DOM Injection
- * This script bypasses Shadow DOM isolation to inject the dog image.
- */
-
 (function() {
-    const dogImgUrl = 'https://i.imgur.com/DJ3lttY.png';
+    const DOG_URL = 'https://i.imgur.com/DJ3lttY.png';
 
-    function injectDog() {
-        const root = document.getElementById('usercentrics-root');
-        if (!root || !root.shadowRoot) return;
+    const injectDog = () => {
+        // 1. Find the host element
+        const host = document.getElementById('usercentrics-root');
+        if (!host || !host.shadowRoot) return;
 
-        // Usercentrics v2 uses several nested divs. 
-        // We look for the common 'uc-banner-content' or 'first-layer' classes.
-        const shadow = root.shadowRoot;
-        const container = shadow.querySelector('section') || 
-                          shadow.querySelector('[role="dialog"]') ||
-                          shadow.querySelector('.uc-banner-first-layer');
+        // 2. Look for the actual banner container inside the Shadow DOM
+        const shadow = host.shadowRoot;
+        // We look for common Usercentrics containers
+        const container = shadow.querySelector('[data-testid="first-layer-container"]') || 
+                          shadow.querySelector('section') || 
+                          shadow.querySelector('.uc-banner-content');
 
-        if (container && !shadow.querySelector('#custom-dog')) {
-            // Create a wrapper for the dog to ensure alignment
-            const dogWrapper = document.createElement('div');
-            dogWrapper.id = 'custom-dog';
-            dogWrapper.style.cssText = `
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 20px;
-                flex-shrink: 0;
-            `;
-
+        if (container && !shadow.getElementById('custom-dog-img')) {
+            // 3. Create the dog image
             const img = document.createElement('img');
-            img.src = dogImgUrl;
+            img.id = 'custom-dog-img';
+            img.src = DOG_URL;
+            
+            // 4. Style the image and the banner to sit side-by-side
             img.style.cssText = `
-                width: 120px;
+                width: 100px;
                 height: auto;
-                border-radius: 8px;
+                margin-right: 15px;
+                flex-shrink: 0;
+                align-self: center;
             `;
 
-            dogWrapper.appendChild(img);
-
-            // Force the banner container to display as a row
+            // Force the banner to be a Flexbox row
             container.style.display = 'flex';
             container.style.flexDirection = 'row';
-            container.style.alignItems = 'stretch';
+            container.style.alignItems = 'center';
+            container.style.paddingLeft = '15px';
 
-            // Insert the dog to the left
-            container.prepend(dogWrapper);
-            console.log("✅ Dog image successfully injected into Shadow DOM");
+            // 5. Insert the dog at the start
+            container.prepend(img);
+            console.log("Dog injected!");
         }
-    }
+    };
 
-    // Set up a persistent observer to handle the CMP's lazy-loading
-    const observer = new MutationObserver(() => {
-        injectDog();
-    });
-
-    observer.observe(document.body, { 
-        childList: true, 
-        subtree: true 
-    });
-
-    // Run once immediately in case it's already there
+    // This observer keeps watching the page. Even if the banner loads 
+    // late or changes, the dog will stay there.
+    const observer = new MutationObserver(() => injectDog());
+    observer.observe(document.body, { childList: true, subtree: true });
+    
+    // Initial check
     injectDog();
 })();
-  </script>
+</script>
 </body>
 
 </html>

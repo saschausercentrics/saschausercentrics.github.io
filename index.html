@@ -39,52 +39,70 @@
     <iframe width="560" height="315" src="https://www.youtube.com/embed/lfSdR-ymk9E" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 <script>
-     (function() {
+/**
+ * Coding Partner - Advanced Shadow DOM Injection
+ * This script bypasses Shadow DOM isolation to inject the dog image.
+ */
+
+(function() {
     const dogImgUrl = 'https://i.imgur.com/DJ3lttY.png';
 
-    const tryInjectDog = () => {
+    function injectDog() {
         const root = document.getElementById('usercentrics-root');
-        if (!root || !root.shadowRoot) return false;
+        if (!root || !root.shadowRoot) return;
 
-        // Usercentrics v2 internal container
-        const container = root.shadowRoot.querySelector('[data-testid="first-layer-container"]');
-        
-        if (container && !root.shadowRoot.querySelector('#custom-dog')) {
-            // 1. Create the dog image element
-            const dog = document.createElement('img');
-            dog.id = 'custom-dog';
-            dog.src = dogImgUrl;
-            dog.style.cssText = `
-                width: 100px; 
-                height: auto; 
-                margin: 20px;
-                object-fit: contain;
+        // Usercentrics v2 uses several nested divs. 
+        // We look for the common 'uc-banner-content' or 'first-layer' classes.
+        const shadow = root.shadowRoot;
+        const container = shadow.querySelector('section') || 
+                          shadow.querySelector('[role="dialog"]') ||
+                          shadow.querySelector('.uc-banner-first-layer');
+
+        if (container && !shadow.querySelector('#custom-dog')) {
+            // Create a wrapper for the dog to ensure alignment
+            const dogWrapper = document.createElement('div');
+            dogWrapper.id = 'custom-dog';
+            dogWrapper.style.cssText = `
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
                 flex-shrink: 0;
             `;
 
-            // 2. Style the banner to be a Row so the dog is on the left
+            const img = document.createElement('img');
+            img.src = dogImgUrl;
+            img.style.cssText = `
+                width: 120px;
+                height: auto;
+                border-radius: 8px;
+            `;
+
+            dogWrapper.appendChild(img);
+
+            // Force the banner container to display as a row
             container.style.display = 'flex';
             container.style.flexDirection = 'row';
-            container.style.alignItems = 'center';
+            container.style.alignItems = 'stretch';
 
-            // 3. Insert the dog at the beginning
-            container.prepend(dog);
-            
-            console.log("Dog successfully added to CMP!");
-            return true; // Success
+            // Insert the dog to the left
+            container.prepend(dogWrapper);
+            console.log("✅ Dog image successfully injected into Shadow DOM");
         }
-        return false;
-    };
+    }
 
-    // Keep checking every 200ms until the banner is found and dog is added
-    const checker = setInterval(() => {
-        if (tryInjectDog()) {
-            clearInterval(checker);
-        }
-    }, 200);
+    // Set up a persistent observer to handle the CMP's lazy-loading
+    const observer = new MutationObserver(() => {
+        injectDog();
+    });
 
-    // Safety: stop checking after 10 seconds if it never appears
-    setTimeout(() => clearInterval(checker), 10000);
+    observer.observe(document.body, { 
+        childList: true, 
+        subtree: true 
+    });
+
+    // Run once immediately in case it's already there
+    injectDog();
 })();
   </script>
 </body>

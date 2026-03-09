@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" , initial-scale="1.0">
+    <title>UC TCF CMP Test</title>    
+    
+    <!-- Begin UC V3 -->
+    <script src="https://web.cmp.usercentrics.eu/tcf/stub.js"></script>
+    <script id="usercentrics-cmp" src="https://web.cmp.usercentrics.eu/ui/loader.js" data-settings-id="N6_2Z7NgWsfGrR" async></script>
+    <!-- End UC V3 -->
+
+    <script>
+    window.addEventListener('UC_CONSENT', function (event) {
+    console.log('UC_CONSENT event detail', event.detail)
+    });
+    </script>
+</head>
+
+<body>
+
+    <h1>UC TCF CMP Test</h1>
+    This is a test.
+</body>
+
+</html>

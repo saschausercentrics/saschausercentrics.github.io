@@ -15,7 +15,6 @@
     window.addEventListener('UC_CONSENT', function (event) {
     console.log('UC_CONSENT event detail', event.detail)
     });
-        // Wait for the __tcfapi to be available, then get the TC String
 function getTCStringAndStore() {
   if (typeof __tcfapi === 'function') {
     __tcfapi('getTCData', 2, function(tcData, success) {
@@ -31,7 +30,6 @@ function getTCStringAndStore() {
   }
 }
 
-// UC_CONSENT fires on page load (after CMP init) and on any consent update
 window.addEventListener('UC_CONSENT', function() {
   getTCStringAndStore();
 });

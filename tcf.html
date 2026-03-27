@@ -31,12 +31,7 @@ function getTCStringAndStore() {
   }
 }
 
-// Best practice: run after UC CMP is initialized
-window.addEventListener('UC_UI_INITIALIZED', function() {
-  getTCStringAndStore();
-});
-
-// Also handle consent updates (user changes their choices)
+// UC_CONSENT fires on page load (after CMP init) and on any consent update
 window.addEventListener('UC_CONSENT', function() {
   getTCStringAndStore();
 });

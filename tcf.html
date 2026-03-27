@@ -15,6 +15,31 @@
     window.addEventListener('UC_CONSENT', function (event) {
     console.log('UC_CONSENT event detail', event.detail)
     });
+        // Wait for the __tcfapi to be available, then get the TC String
+function getTCStringAndStore() {
+  if (typeof __tcfapi === 'function') {
+    __tcfapi('getTCData', 2, function(tcData, success) {
+      if (success && tcData && tcData.tcString) {
+        localStorage.setItem('ucCustomer', tcData.tcString);
+        console.log('TC String stored:', tcData.tcString);
+      } else {
+        console.warn('TCF API call was not successful or tcString unavailable.');
+      }
+    });
+  } else {
+    console.warn('__tcfapi is not available on this page.');
+  }
+}
+
+// Best practice: run after UC CMP is initialized
+window.addEventListener('UC_UI_INITIALIZED', function() {
+  getTCStringAndStore();
+});
+
+// Also handle consent updates (user changes their choices)
+window.addEventListener('consent_status', function() {
+  getTCStringAndStore();
+});
     </script>
 </head>
 

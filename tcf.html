@@ -20,7 +20,7 @@ function getTCStringAndStore() {
   if (typeof __tcfapi === 'function') {
     __tcfapi('getTCData', 2, function(tcData, success) {
       if (success && tcData && tcData.tcString) {
-        localStorage.setItem('ucCustomer', tcData.tcString);
+        localStorage.setItem('tcString', tcData.tcString);
         console.log('TC String stored:', tcData.tcString);
       } else {
         console.warn('TCF API call was not successful or tcString unavailable.');

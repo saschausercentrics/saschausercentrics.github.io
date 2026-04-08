@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" , initial-scale="1.0">
+    <title>UC CMP V3 UC_CONSENT Event Listener Test</title>    
+    
+    <!-- Begin UC V3 -->
+    <script id="usercentrics-cmp" src="https://web.cmp.usercentrics.eu/ui/loader.js" data-settings-id="AzbOGe0W58_AVD" async></script>
+    <!-- End UC V3 -->
+
+    <script>
+    window.addEventListener('UC_CONSENT', function (event) {
+    console.log('UC_CONSENT event detail', event.detail)
+    });
+    </script>
+
+</head>
+
+<body>
+
+    <h1>UC CMP V3 UC_CONSENT Event Listener Test</h1>
+    Just testing UC_CONSENT event listener.
+</body>
+
+</html>

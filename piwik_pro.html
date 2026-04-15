@@ -34,7 +34,7 @@ tags.async=!0,tags.src="https://saschauc.containers.piwik.pro/"+id+".js"+qPStrin
 
     const marketingConsent = e.detail.ucCategory.marketing;
       console.log('marketing', marketingConsent);
-    const piwikProConsent = e.detail["Piwik PRO"]; // exact DPS name from UC config
+    const piwikProConsent = e.detail["Piwik Pro"]; // exact DPS name from UC config
       console.log('piwik', piwikProConsent);
 
     if (marketingConsent === true && piwikProConsent === true) {

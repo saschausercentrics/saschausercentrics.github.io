@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" , initial-scale="1.0">
+    <title>UC CMP Test with Piwik Pro</title>    
+    
+    <!-- Begin UC V3 -->
+    <script id="usercentrics-cmp" src="https://web.cmp.usercentrics.eu/ui/loader.js" data-settings-id="AzbOGe0W58_AVD" async></script>
+    <!-- End UC V3 -->
+
+  <script type="text/javascript">
+(function(window, document, dataLayerName, id) {
+window[dataLayerName]=window[dataLayerName]||[],window[dataLayerName].push({start:(new Date).getTime(),event:"stg.start"});var scripts=document.getElementsByTagName('script')[0],tags=document.createElement('script');
+var qP=[];dataLayerName!=="dataLayer"&&qP.push("data_layer_name="+dataLayerName);var qPString=qP.length>0?("?"+qP.join("&")):"";
+tags.async=!0,tags.src="https://saschauc.containers.piwik.pro/"+id+".js"+qPString,scripts.parentNode.insertBefore(tags,scripts);
+!function(a,n,i){a[n]=a[n]||{};for(var c=0;c<i.length;c++)!function(i){a[n][i]=a[n][i]||{},a[n][i].api=a[n][i].api||function(){var a=[].slice.call(arguments,0);"string"==typeof a[0]&&window[dataLayerName].push({event:n+"."+i+":"+a[0],parameters:[].slice.call(arguments,1)})}}(i[c])}(window,"ppms",["tm","cm"]);
+})(window, document, 'dataLayer', 'c2a14ddd-d3ba-42f7-a59c-ee54e3eedd6a');
+</script>
+
+    <script>
+    window.addEventListener('UC_CONSENT', function (event) {
+    console.log('UC_CONSENT event detail', event.detail)
+    });
+      ppms.cm.api(
+  "setInitialComplianceSettings",
+  { consents: ["analytics"] },
+  console.log,
+  console.error
+);
+  window.addEventListener("ucEvent", function (e) {
+  if (e.detail && e.detail.event === "consent_status") {
+
+    const marketingConsent = e.detail.ucCategory.marketing;
+    const piwikProConsent = e.detail["Piwik PRO"]; // exact DPS name from UC config
+
+    if (marketingConsent === true && piwikProConsent === true) {
+      ppms.cm.api(
+        "setComplianceSettings",
+        { consents: { analytics: { status: 1 } } },
+        console.log,
+        console.error
+      );
+    } else {
+      ppms.cm.api(
+        "setComplianceSettings",
+        { consents: { analytics: { status: 0 } } },
+        console.log,
+        console.error
+      );
+    }
+  }
+});
+</script>
+    
+</head>
+
+<body>
+
+    <h1>UC CMP Test with Piwik Pro</h1>
+    <div class="uc-embed" uc-embed-type="category" uc-embed-show-toggle="true"></div>
+    <div class="uc-embed-tracker"></div>
+</body>
+
+</html>

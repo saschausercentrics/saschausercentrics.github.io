@@ -33,7 +33,9 @@ tags.async=!0,tags.src="https://saschauc.containers.piwik.pro/"+id+".js"+qPStrin
   if (e.detail && e.detail.event === "consent_status") {
 
     const marketingConsent = e.detail.ucCategory.marketing;
+      console.log(marketingConsent);
     const piwikProConsent = e.detail["Piwik PRO"]; // exact DPS name from UC config
+      console.log(piwikProConsent);
 
     if (marketingConsent === true && piwikProConsent === true) {
       ppms.cm.api(

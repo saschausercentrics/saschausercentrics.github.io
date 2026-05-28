@@ -19,8 +19,8 @@
             ad_storage: "denied",
             ad_user_data: "denied",
             analytics_storage: "denied",
-          personalization_storage: "denied",
-          functionality_storage: "denied",
+            personalization_storage: "denied",
+            functionality_storage: "denied",
             wait_for_update: 2000 // milliseconds to wait for update
         });
 
@@ -53,8 +53,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       'ad_storage': categories.marketing === true ? 'granted' : 'denied',
       'ad_user_data': categories.marketing === true ? 'granted' : 'denied',
       'ad_personalization': categories.marketing === true ? 'granted' : 'denied',
-      'personalization_storage': categories.marketing === true ? 'granted' : 'denied',
       'analytics_storage': categories.marketing === true ? 'granted' : 'denied',
+      'personalization_storage': categories.marketing === true ? 'granted' : 'denied',
       'functionality_storage': categories.functional === true ? 'granted' : 'denied'
     });
   }

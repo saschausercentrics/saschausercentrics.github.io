@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" , initial-scale="1.0">
+    <title>UC CMP Test with Event Listener</title>
+      <!-- Google Consent Mode Consent Default -->
+  <script type="text/javascript">
+        // create dataLayer
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        // set "denied" as default for both ad and analytics storage, as well as ad_user_data and ad_personalization,
+        gtag("consent", "default", {
+            ad_personalization: "denied",
+            ad_storage: "denied",
+            ad_user_data: "denied",
+            analytics_storage: "denied",
+          personalization_storage: "denied",
+          functionality_storage: "denied",
+            wait_for_update: 2000 // milliseconds to wait for update
+        });
+
+        // Enable ads data redaction by default [optional]
+        gtag("set", "ads_data_redaction", true);
+    </script>
+        <!-- End Google Consent Mode Consent Default -->
+  
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-W9JHF29C');</script>
+<!-- End Google Tag Manager -->
+  
+    <!-- Begin UC V3 -->
+  <script id="usercentrics-cmp" src="https://web.cmp.usercentrics.eu/ui/loader.js" data-settings-id="kS5b8sBa_QYLy-" async></script>
+    <!-- End UC V3 -->
+
+    <script>
+    window.addEventListener('UC_CONSENT', function (event) {
+    console.log('UC_CONSENT event detail', event.detail)
+    });
+
+      window.addEventListener("ucEvent", function(event) {
+  const data = event.detail;
+  
+  // Check if it's a consent_status event
+  if (data.event === "consent_status") {
+    const categories = data.ucCategory;
+    
+    window.gtag('consent', 'update', {
+      'ad_storage': categories.marketing ? 'granted' : 'denied',
+      'ad_user_data': categories.marketing ? 'granted' : 'denied',
+      'ad_personalization': categories.marketing ? 'granted' : 'denied',
+      'personalization_storage': categories.marketing ? 'granted' : 'denied',
+      'analytics_storage': categories.marketing ? 'granted' : 'denied',
+      'functionality_storage': categories.functional ? 'granted' : 'denied'
+    });
+  }
+});
+</script>
+    
+</head>
+
+<body>
+
+    <h1>UC CMP Test with Event Listener</h1>
+Just a test to illustrate updating Google Consent Mode storage types based on category consent.
+</body>
+
+</html>

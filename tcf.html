@@ -5,6 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width" , initial-scale="1.0">
     <title>UC TCF CMP Test</title>    
+    <script>
+        const params = new URLSearchParams(window.location.search);
+if (params.get("uc_test") === "true") {
+  document.cookie = "scanner-visited-tcf-page=true; path=/";
+}
+    </script>
     
     <!-- Begin UC V3 -->
     <script src="https://web.cmp.usercentrics.eu/tcf/stub.js"></script>

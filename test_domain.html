@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" , initial-scale="1.0">
+    <title>Test Domain</title>   
+    
+    <!-- Begin UC -->
+    <script id="usercentrics-cmp" src="https://web.cmp.usercentrics.eu/ui/loader.js" data-settings-id="p6IVQx68K26-cx" async></script>
+    <!-- End UC -->
+
+    <script>
+    window.addEventListener('UC_CONSENT', function (event) {
+    console.log('UC_CONSENT event detail', event.detail)
+    });
+    </script>
+    
+</head>
+
+<body>
+
+    <h1>Test Domain</h1>
+    <div class="uc-embed" uc-embed-type="category" uc-embed-show-toggle="true"></div>
+    <div class="uc-embed-tracker"></div>
+</body>
+
+</html>

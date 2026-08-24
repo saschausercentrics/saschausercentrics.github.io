@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" , initial-scale="1.0">
+    <title>Hide CMP, then explicit opt-in</title>   
+    
+    <!-- Begin UC -->
+    <script type="application/javascript">
+    var UC_UI_SUPPRESS_CMP_DISPLAY=true;
+  </script>
+    <script id="usercentrics-cmp" src="https://web.cmp.usercentrics.eu/ui/loader.js" data-settings-id="NJofNtFoUmO0Qw" async></script>
+  <script>window.addEventListener("ucEvent", function (e) {    
+  if(e.detail && e.detail.event == "consent_status" && e.detail.type == 'IMPLICIT') {
+    window.__ucCmp.acceptAllConsents()
+    console.log('Consent was implicit, accepted all');
+    }
+    else {
+      console.log('Consent was explicit, no action');
+    }
+});
+</script>
+    <!-- End UC -->
+    
+</head>
+
+<body>
+
+    <h1>Hide CMP, then explicit opt-in</h1>
+    Testing because test.
+</body>
+
+</html>

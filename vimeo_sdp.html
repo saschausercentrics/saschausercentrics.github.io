@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" , initial-scale="1.0">
+    <title>Vimeo with Smart Data Protector</title>    
+    
+    <!-- Begin UC -->
+    <link rel="preconnect" href="//privacy-proxy.usercentrics.eu">
+    <link rel="preload" href="//privacy-proxy.usercentrics.eu/latest/uc-block.bundle.js" as="script">
+    <script id="usercentrics-cmp" src="https://web.cmp.usercentrics.eu/ui/loader.js" data-settings-id="AzbOGe0W58_AVD" async></script>
+    <script type="application/javascript" src="https://privacy-proxy.usercentrics.eu/latest/uc-block.bundle.js"></script>
+    <script>
+    uc.blockOnly([
+    'HyEX5Nidi-m' // Vimeo will be blocked
+    // ... all other technologies will be ignored!
+    ]);
+    </script>
+
+    <!-- End UC -->
+</head>
+
+<body>
+
+    <h1>Vimeo with Smart Data Protector</h1>
+    <h2>Vimeo is initially blocked</h2>
+    <iframe title="vimeo-player" src="https://player.vimeo.com/video/1057380663?h=6dc2213239" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>
+    <h2>YouTube is ignored</h2>
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/lfSdR-ymk9E" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</body>
+
+</html>

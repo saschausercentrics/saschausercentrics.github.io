@@ -23,8 +23,6 @@
 const layer = { base: buttonColors };
 
 window.addEventListener('UC_UI_INITIALIZED', () => {
-        const cfg = window.__ucCmp.getCmpConfig();
-console.log(JSON.stringify(cfg, null, 2));
   window.__ucCmp.updateTheme({
     layers: { desktop: layer, tablet: layer, mobile: layer, xs: layer },
   });

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" , initial-scale="1.0">
+    <title>Theme Test</title>    
+    
+    <!-- Begin UC -->
+  <script>const buttonColors = {
+  colors: {
+    acceptBg: '#000000', acceptTxt: '#FFFFFF',
+    denyBg:   '#000000', denyTxt:   '#FFFFFF',
+    saveBg:   '#000000', saveTxt:   '#FFFFFF',
+    moreBg:   '#000000', moreTxt:   '#FFFFFF',
+    // US / CCPA layer, if in scope:
+    ccpaButtonColor: '#000000', ccpaButtonTextColor: '#FFFFFF',
+  },
+};
+
+const layer = { base: buttonColors };
+
+window.addEventListener('UC_UI_INITIALIZED', () => {
+  window.__ucCmp.updateTheme({
+    layers: { desktop: layer, tablet: layer, mobile: layer, xs: layer },
+  });
+});
+  </script>
+    <script id="usercentrics-cmp" src="https://web.cmp.usercentrics.eu/ui/loader.js" data-settings-id="AzbOGe0W58_AVD" async></script>
+    <!-- End UC -->
+    
+</head>
+
+<body>
+
+    <h1>Theme Test</h1>
+    Testing how the theming can work.
+</body>
+
+</html>

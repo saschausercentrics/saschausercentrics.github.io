@@ -9,6 +9,8 @@
     <!-- Begin UC -->
   <script>const buttonColors = {
   colors: {
+      primary: '#000000',
+  tertiary: '#000000',
     acceptBg: '#000000', acceptTxt: '#FFFFFF',
     denyBg:   '#000000', denyTxt:   '#FFFFFF',
     saveBg:   '#000000', saveTxt:   '#FFFFFF',
@@ -24,7 +26,8 @@ window.addEventListener('UC_UI_INITIALIZED', () => {
   window.__ucCmp.updateTheme({
     layers: { desktop: layer, tablet: layer, mobile: layer, xs: layer },
   });
-});
+    const cfg = await window.__ucCmp.getCmpConfig();
+console.log(JSON.stringify(cfg, null, 2));
   </script>
     <script id="usercentrics-cmp" src="https://web.cmp.usercentrics.eu/ui/loader.js" data-settings-id="AzbOGe0W58_AVD" async></script>
     <!-- End UC -->

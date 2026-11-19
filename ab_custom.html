@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" , initial-scale="1.0">
+    <title>UC CMP A/B Test</title>    
+    
+    <!-- Begin UC -->
+  <script>window.UC_AB_VARIANT = "variant1";</script>
+    <script id="usercentrics-cmp" src="https://web.cmp.usercentrics.eu/ui/loader.js" data-settings-id="BsaVxUQFOG0ET7" async></script>
+  <!-- End UC -->
+
+    <script>
+    window.addEventListener('UC_CONSENT', function (event) {
+    console.log('UC_CONSENT event detail', event.detail)
+    });
+</script>
+    
+</head>
+
+<body>
+
+    <h1>UC CMP A/B Test</h1>
+    A/B test example.
+</body>
+
+</html>
